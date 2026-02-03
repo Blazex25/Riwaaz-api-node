@@ -4,7 +4,7 @@ const {Schema} = mongoose;
 const orderItemsSchema = new Schema({
     product:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"products",
+        ref:"Product",
         required:true
     },
     size:{
@@ -26,6 +26,9 @@ const orderItemsSchema = new Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"users",
         required:true
+    },
+    imageUrl: {
+        type: String,
     },
 });
 

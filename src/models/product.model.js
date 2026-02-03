@@ -2,62 +2,62 @@ const mongoose = require("mongoose");
 
 
 const productSchema = new mongoose.Schema({
-    title:{
-        type:String,
+    title: {
+        type: String,
     },
-    description:{
-        type:String,
+    description: {
+        type: String,
     },
-    price:{
-        type:Number,
+    price: {
+        type: Number,
     },
-    discountedPrice:{
-        type:Number,
+    discountedPrice: {
+        type: Number,
     },
-    discountPersent:{
-        type:Number,
+    discountPercent: {
+        type: Number,
     },
-    quantity:{
-        type:Number,
-        required:true
+    quantity: {
+        type: Number,
+        required: true
     },
-    brand:{
-        type:String,
+    brand: {
+        type: String,
     },
-    color:{
-        type:String,
+    color: {
+        type: String,
     },
-    size:[{
-        name:{type:String},
-        quantity:{type:Number}
+    size: [{
+        name: { type: String },
+        quantity: { type: Number }
     }],
-    imageUrl:{
-        type:String,
+    imageUrl: {
+        type: String,
     },
-    ratings:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"ratings"
+    ratings: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ratings"
     },
-],
-    reviews:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"reviews"
+    ],
+    reviews: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "reviews"
     },
-],
-numRatings:{
-        type:Number,
-        default:0
+    ],
+    numRatings: {
+        type: Number,
+        default: 0
     },
-    category:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"categories",
+    category: {
+        type: String,
+        required: true
     },
-    createdAt:{
-        type:Date,
-        default:Date.now
+    createdAt: {
+        type: Date,
+        default: Date.now
     },
 });
 
-const Product=mongoose.model("Product",productSchema);
+const Product = mongoose.model("Product", productSchema);
 
-module.exports=Product;
+module.exports = Product;

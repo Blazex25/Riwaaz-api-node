@@ -1,7 +1,6 @@
 const Address = require("../models/address.model.js");
 const cartService = require("../services/cart.service.js")
 const Order = require("../models/order.model.js");
-const { populate } = require("../models/cart.model.js");
 const OrderItem = require("../models/orderItems.model.js");
 
 
@@ -43,26 +42,26 @@ async function creatOrder(user, shipAddress) {
         user,
         orderItems,
 
-      
+
         orderDate: new Date(),
         deliveryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
 
-        totalPrice: cart.totalPrice,                  
+        totalPrice: cart.totalPrice,
         totalDiscountedPrice: cart.totalDiscountedPrice,
         discount: cart.discount,
         totalItems: cart.totalItems,
 
         shippingAddress: address,
 
-        
-        paymentDetails: {
-            paymentMethod: "COD",
-            transectionId: null,
-            paymentId: null,
-            paymentStatus: "PENDING",
-        },
 
+        paymentDetails: {
+            method: "COD",          // or ONLINE
+            paymentId: null,
+            paymentLinkId: null,
+            status: "PENDING",
+        },
         orderStatus: "PENDING",
+
     });
 
     const savedOrder = await createdOrder.save();
@@ -72,8 +71,9 @@ async function creatOrder(user, shipAddress) {
 async function placeOrder(orderId) {
     const order = await findOrderById(orderId);
 
-    order.orderStatus = 'Placed';
-    order.paymentDetails.status = 'Completed';
+    order.orderStatus = 'PLACED';
+    order.paymentDetails.status = 'PAID';
+
 
     return await order.save();
 }
@@ -106,14 +106,34 @@ async function cancelOrder(orderId) {
     return await order.save();
 }
 async function findOrderById(orderId) {
-    const order = await Order.findById(orderId).populate({ path: "orderItems", populate: { path: "produt" } }).populate('shippingAddress').populate('user');
+    try {
+        const order = await Order.findById(orderId)
+            .populate("shippingAddress")
+            .populate("user")
+            .populate({
+                path: "orderItems",
+                populate: {
+                    path: "product"
+                }
+            });
 
-    return order;
+        if (!order) {
+            throw new Error("Order not found");
+        }
+
+        return order;
+
+    } catch (error) {
+        console.error("findOrderById error:", error);
+        throw error;
+    }
 }
+
 
 async function userOrderHistory(userId) {
     try {
-        const orders = await Order.find({ user: userId, orderStatus: "Placed" }).populate({ path: "orderItems", populate: { path: "product" } }).lean();
+        const orders = await Order.find({ user: userId, orderStatus: "PLACED" })
+            .populate({ path: "orderItems", populate: { path: "product" } }).lean();
         return orders;
 
     } catch (error) {

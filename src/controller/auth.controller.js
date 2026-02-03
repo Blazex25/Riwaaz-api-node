@@ -5,6 +5,7 @@ const cartService = require('../services/cart.service');
 
 
 const register = async (req, res) => {
+    
     try {
         const user = await userService.createUser(req.body);
         const jwt = jwtProvider.generateToken(user._id);
